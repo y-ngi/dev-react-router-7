@@ -12,13 +12,13 @@ services:
       - ./wiremock/mappings:/home/wiremock/mappings
     entrypoint: ["/docker-entrypoint.sh", "--global-response-templating", "--disable-gzip", "--verbose"]
     
-  db:
+  postgres16:
     container_name: my_postgres
     image: "postgres:16"
     ports:
       - 5432:5432
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - postgres16_data:/var/lib/postgresql/data
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_USER: dev_user
@@ -26,10 +26,31 @@ services:
       POSTGRES_DB: dev_db
       TZ: Asia/Tokyo
 
+  mysql80:
+    container_name: mysql80
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql80_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: dev_password
+      MYSQL_USER: dev_user
+      MYSQL_PASSWORD: dev_password
+      MYSQL_DATABASE: dev_db
+      TZ: Asia/Tokyo
+
 volumes:
-  db_data:
+  postgres16_data:
     driver: local
     driver_opts:
       type: none
       device: ./postgres/data
       o: bind
+  mysql80_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./mysql80/data
+      o: bind
+      
